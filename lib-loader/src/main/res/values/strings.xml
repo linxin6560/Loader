@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">lib-network</string>
+    <!--无缓存内容页面-->
+    <string name="toast_net_broken_nocache">哦啊~手机网络不太顺畅哦！点击屏幕重新加载</string>
+    <!--有缓存内容页面-->
+    <string name="toast_net_broken_cache">哦啊~手机网络不太顺畅哦</string>
+    <!--无网络进行操作-->
+    <string name="toast_net_broken">Oh！网络不见了，请检查网络链接</string>
+    <!--操作中网络出错-->
+    <string name="toast_net_broken_in_operate">操作失败！请检查网络连接后再次操作！</string>
+</resources>
