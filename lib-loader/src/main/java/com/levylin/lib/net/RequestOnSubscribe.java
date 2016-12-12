@@ -1,6 +1,6 @@
 package com.levylin.lib.net;
 
-import com.levylin.lib.net.exception.HttpException;
+import com.levylin.lib.net.exception.ResponseException;
 
 import java.io.IOException;
 
@@ -144,7 +144,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
                 onNext(emitter, t);
                 return;
             }
-            onError(emitter, new HttpException(response));
+            onError(emitter, new ResponseException(response));
         } catch (IOException e) {
             e.printStackTrace();
             onError(emitter, e);
