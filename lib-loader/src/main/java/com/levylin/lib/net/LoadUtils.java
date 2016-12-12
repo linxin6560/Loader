@@ -1,13 +1,11 @@
 package com.levylin.lib.net;
 
 import com.levylin.lib.net.cache.ICacheChecker;
-import com.levylin.lib.net.converter.FastJsonConverterFactory;
 import com.levylin.lib.net.listener.OnLoadListener;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -15,11 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.ResourceSubscriber;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * 数据加载器
@@ -46,32 +40,6 @@ public class LoadUtils {
      */
     public static void flushCache() {
         FileCache.getInstance().flushCache();
-    }
-
-    /**
-     * 生成接口类
-     *
-     * @param baseUrl Retrofit必须要设置的，但其实并没有什么卵用，因为这边主要是把URL和参数是通过@Url和@FieldMap设置的
-     * @param clazz   接口类
-     * @param <T>     接口类型
-     * @return
-     */
-    public static <T> T create(String baseUrl, Class<T> clazz) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.readTimeout(15, TimeUnit.SECONDS);
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(loggingInterceptor);
-        }
-        OkHttpClient client = builder.build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(client)
-                .baseUrl(baseUrl)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(FastJsonConverterFactory.create())
-                .build();
-        return retrofit.create(clazz);
     }
 
     /**
