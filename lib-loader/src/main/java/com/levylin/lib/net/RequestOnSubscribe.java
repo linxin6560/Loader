@@ -28,6 +28,9 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
     RequestOnSubscribe(Call<T> call, CacheStrategy<T> strategy) {
         mRequest = call.request();
         this.cacheStrategy = strategy;
+        if (cacheStrategy == null) {
+            cacheStrategy = new NoCacheStrategy<>();
+        }
         this.call = call;
     }
 
