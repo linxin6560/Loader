@@ -11,12 +11,8 @@ public abstract class CacheStrategy<T> {
     private static final int STATUS_DEFAULT = -1;//默认状态，该状态下，通过cache type自行判断是否需要读取保和存缓存
     private static final int STATUS_TRUE = 1;//生效状态，不以cache type判断存取，改为以该状态为主
     private static final int STATUS_FALSE = 0;//不生效状态，不以cache type判断存取，改为以改状态为主
-    //默认过期时间180秒
-    public static final int DEFAULT_CACHE_TIME_OUT = 180 * 1000;
     //缓存类型
     private CacheType cacheType = CacheType.READ_CACHE_ONLY_NOT_EXPIRES;
-    //缓存过期时间
-    private int cacheTimeOut = DEFAULT_CACHE_TIME_OUT;
     private int readCacheStatus = STATUS_DEFAULT, saveCacheStatus = STATUS_DEFAULT;
 
     public CacheStrategy() {
@@ -24,20 +20,11 @@ public abstract class CacheStrategy<T> {
     }
 
     public CacheStrategy(CacheType cacheType) {
-        this(cacheType, DEFAULT_CACHE_TIME_OUT);
-    }
-
-    public CacheStrategy(CacheType cacheType, int cacheTimeOut) {
         this.cacheType = cacheType;
-        this.cacheTimeOut = cacheTimeOut;
     }
 
     public CacheType getCacheType() {
         return cacheType;
-    }
-
-    public int getCacheTimeOut() {
-        return cacheTimeOut;
     }
 
     /**
