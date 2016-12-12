@@ -51,7 +51,7 @@ public class LoadUtils {
      * @param <T>      数据模型类型
      * @return
      */
-    public static <T> Disposable load(Call<T> call, Type type, LoadConfig config, final OnLoadListener<T> listener) {
+    public static <T> Disposable load(Call<T> call, Type type, CacheStrategy config, final OnLoadListener<T> listener) {
         ResponseSubscriber<T> subscriber = new ResponseSubscriber<>(listener);
         Flowable.create(new RequestOnSubscribe<>(call, type, config), BackpressureStrategy.BUFFER)
                 .materialize()
@@ -71,7 +71,7 @@ public class LoadUtils {
      * @param <T>      数据模型类型
      * @return
      */
-    public static <T> ResourceSubscriber loadSync(Call<T> call, Type type, LoadConfig config, OnLoadListener<T> listener) {
+    public static <T> ResourceSubscriber loadSync(Call<T> call, Type type, CacheStrategy config, OnLoadListener<T> listener) {
         ResponseSubscriber<T> subscriber = new ResponseSubscriber<>(listener);
         Flowable.create(new RequestOnSubscribe<>(call, type, config), BackpressureStrategy.BUFFER)
                 .subscribe(subscriber);

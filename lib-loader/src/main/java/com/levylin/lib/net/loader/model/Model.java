@@ -1,7 +1,7 @@
 package com.levylin.lib.net.loader.model;
 
 import com.levylin.lib.net.CacheType;
-import com.levylin.lib.net.LoadConfig;
+import com.levylin.lib.net.CacheStrategy;
 import com.levylin.lib.net.LoadUtils;
 import com.levylin.lib.net.listener.OnLoadListener;
 import com.levylin.lib.net.utils.ClassUtils;
@@ -20,12 +20,12 @@ import retrofit2.Call;
 public abstract class Model<T> {
 
     private Type mType;
-    LoadConfig loadConfig;
+    CacheStrategy loadConfig;
     private boolean isManualRefresh = false;//手动刷新
 
     protected Model() {
         mType = getSuperClassGenricType(getClass(), 0);
-        loadConfig = new LoadConfig(getCacheType(), getCacheTimeOut());
+        loadConfig = new CacheStrategy(getCacheType(), getCacheTimeOut());
     }
 
     /**

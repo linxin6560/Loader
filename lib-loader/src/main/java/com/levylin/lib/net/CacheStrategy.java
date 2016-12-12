@@ -1,11 +1,11 @@
 package com.levylin.lib.net;
 
 /**
- * 加载配置
+ * 缓存策略
  * Created by LinXin on 2016/7/25 16:18.
  * edit by LinXin on 2016/8/11 9:30 去掉设置缓存及缓存时间的操作，改为只在构造函数中控制，目的是防止类型被改变，可通过设置加载状态判断是否加载与保存缓存
  */
-public class LoadConfig {
+public class CacheStrategy {
     private static final int STATUS_DEFAULT = -1;//默认状态，该状态下，通过cache type自行判断是否需要读取保和存缓存
     private static final int STATUS_TRUE = 1;//生效状态，不以cache type判断存取，改为以该状态为主
     private static final int STATUS_FALSE = 0;//不生效状态，不以cache type判断存取，改为以改状态为主
@@ -17,15 +17,15 @@ public class LoadConfig {
     private int cacheTimeOut = DEFAULT_CACHE_TIME_OUT;
     private int readCacheStatus = STATUS_DEFAULT, saveCacheStatus = STATUS_DEFAULT;
 
-    public LoadConfig() {
+    public CacheStrategy() {
         this(CacheType.READ_CACHE_ONLY_NOT_EXPIRES);
     }
 
-    public LoadConfig(CacheType cacheType) {
+    public CacheStrategy(CacheType cacheType) {
         this(cacheType, DEFAULT_CACHE_TIME_OUT);
     }
 
-    public LoadConfig(CacheType cacheType, int cacheTimeOut) {
+    public CacheStrategy(CacheType cacheType, int cacheTimeOut) {
         this.cacheType = cacheType;
         this.cacheTimeOut = cacheTimeOut;
     }

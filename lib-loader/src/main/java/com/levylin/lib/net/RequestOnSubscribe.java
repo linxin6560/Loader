@@ -28,7 +28,6 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
     private Call<T> call;
     //数据类型
     private Type type;
-
     //缓存key
     private String cacheKey;
     //文件缓存
@@ -36,9 +35,9 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
     //是否需要保存缓存
     private boolean isNeedSaveCache;
     //加载配置
-    private LoadConfig loadConfig;
+    private CacheStrategy cacheStrategy;
 
-    RequestOnSubscribe(Call<T> call, Type type, LoadConfig config) {
+    RequestOnSubscribe(Call<T> call, Type type, CacheStrategy strategy) {
         Request request = call.request();
         HttpUrl httpUrl = request.url();
         StringBuilder sb = new StringBuilder();
@@ -52,7 +51,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
             }
         }
         url = sb.toString();
-        this.loadConfig = config;
+        this.cacheStrategy = strategy;
         this.call = call;
         this.type = type;
         this.mFileCache = FileCache.getInstance();
@@ -63,8 +62,8 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
     public void subscribe(FlowableEmitter<T> emitter) throws Exception {
         Request request = call.request();
         if (request.method().equalsIgnoreCase("POST")) {//POST走不读缓存,不存缓存
-            loadConfig.setIsReadCache(false);
-            loadConfig.setIsSaveCache(false);
+            cacheStrategy.setIsReadCache(false);
+            cacheStrategy.setIsSaveCache(false);
         }
         emitter.setCancellable(new Cancellable() {
             @Override
@@ -75,13 +74,13 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
             }
         });
         isNeedSaveCache = ensureIsNeedSaveCache(request);
-        if (!loadConfig.isReadCache()) {
+        if (!cacheStrategy.isReadCache()) {
             requestFromNet(emitter);
-            loadConfig.reset();//重置状态
+            cacheStrategy.reset();//重置状态
             onComplete(emitter);
             return;
         }
-        switch (loadConfig.getCacheType()) {
+        switch (cacheStrategy.getCacheType()) {
             case NO_CACHE:
                 requestFromNet(emitter);
                 break;
@@ -95,7 +94,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
                 requestReadCacheAndNet(emitter);
                 break;
         }
-        loadConfig.reset();//重置状态
+        cacheStrategy.reset();//重置状态
         onComplete(emitter);
     }
 
@@ -106,7 +105,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      */
     private boolean ensureIsNeedSaveCache(Request request) {
         return !request.method().equalsIgnoreCase("POST") //Post类型不保存缓存
-                && loadConfig.isSaveCache();//缓存配置中的是否需要保存
+                && cacheStrategy.isSaveCache();//缓存配置中的是否需要保存
     }
 
     /**
@@ -116,7 +115,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      */
     private void requestReadCacheFirst(FlowableEmitter<? super T> emitter) {
         String result = mFileCache.getCacheData(cacheKey);
-        if (!mFileCache.isTimeOut(cacheKey, loadConfig.getCacheTimeOut()) && !TextUtils.isEmpty(result)) {
+        if (!mFileCache.isTimeOut(cacheKey, cacheStrategy.getCacheTimeOut()) && !TextUtils.isEmpty(result)) {
             readFromCache(result, emitter);
         } else {
             //过期则重新从网络读取数据
@@ -134,7 +133,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
         if (!TextUtils.isEmpty(result)) {
             readFromCache(result, emitter);
         }
-        if (mFileCache.isTimeOut(cacheKey, loadConfig.getCacheTimeOut())) {
+        if (mFileCache.isTimeOut(cacheKey, cacheStrategy.getCacheTimeOut())) {
             //过期则重新从网络读取数据
             requestFromNet(emitter);
         }
