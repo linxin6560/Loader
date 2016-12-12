@@ -10,7 +10,7 @@ public class CacheStrategy {
     private static final int STATUS_TRUE = 1;//生效状态，不以cache type判断存取，改为以该状态为主
     private static final int STATUS_FALSE = 0;//不生效状态，不以cache type判断存取，改为以改状态为主
     //默认过期时间180秒
-    public static final int DEFAULT_CACHE_TIME_OUT = 180;
+    public static final int DEFAULT_CACHE_TIME_OUT = 180 * 1000;
     //缓存类型
     private CacheType cacheType = CacheType.READ_CACHE_ONLY_NOT_EXPIRES;
     //缓存过期时间

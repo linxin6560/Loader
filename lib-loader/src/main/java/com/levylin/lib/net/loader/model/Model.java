@@ -4,7 +4,6 @@ import com.levylin.lib.net.CacheType;
 import com.levylin.lib.net.CacheStrategy;
 import com.levylin.lib.net.LoadUtils;
 import com.levylin.lib.net.listener.OnLoadListener;
-import com.levylin.lib.net.utils.ClassUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

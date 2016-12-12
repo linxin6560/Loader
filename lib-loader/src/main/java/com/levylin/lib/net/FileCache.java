@@ -14,13 +14,13 @@ class FileCache {
     private FileCache() {
     }
 
-    public static FileCache getInstance() {
+    static FileCache getInstance() {
         if (mInstance == null)
             mInstance = new FileCache();
         return mInstance;
     }
 
-    public void init(String dir, int size) {
+    void init(String dir, int size) {
         File dirFile = new File(dir);
         if (!dirFile.exists()) {
             dirFile.mkdirs();
@@ -38,7 +38,7 @@ class FileCache {
      * @param cacheKey 缓存key
      * @param jsonStr  json数据
      */
-    public void saveCacheFileData(String cacheKey, String jsonStr) {
+    void saveCacheFileData(String cacheKey, String jsonStr) {
         DiskLruCache.Editor editor = null;
         try {
             editor = mDiskLruCache.edit(cacheKey);
@@ -61,7 +61,7 @@ class FileCache {
      *
      * @param cacheKey 缓存key
      */
-    public String getCacheData(String cacheKey) {
+    String getCacheData(String cacheKey) {
         try {
             DiskLruCache.Snapshot snapshot = mDiskLruCache.get(cacheKey);
             if (snapshot != null) {
@@ -80,13 +80,13 @@ class FileCache {
      * @param cacheSeconds 缓存过期时间
      * @return 是否过期，true:过期或者文件不存在，false:未过期
      */
-    public boolean isTimeOut(String cacheKey, int cacheSeconds) {
+    boolean isTimeOut(String cacheKey, int cacheSeconds) {
         final File f = new File(mDiskLruCache.getDirectory(), cacheKey + ".0");
         if (f.exists()) {
             long time = f.lastModified();
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(time);
-            cal.add(Calendar.SECOND, cacheSeconds);
+            cal.add(Calendar.MILLISECOND, cacheSeconds);
             // 如果缓存过期,则返回空
             boolean isTimeOut = cal.before(Calendar.getInstance());
             if (isTimeOut) {//如果过期则删除
@@ -100,7 +100,7 @@ class FileCache {
     /**
      * 将缓存记录同步到journal文件中。
      */
-    public void flushCache() {
+    void flushCache() {
         try {
             if (mDiskLruCache == null)
                 return;
