@@ -108,10 +108,6 @@ public abstract class CacheStrategy<T> {
 
     /**
      * 缓存的枚举类型
-     *
-     * @author LinXin
-     * @version 1.0.0
-     * @date 2016-04-19
      */
     public enum CacheType {
         //不读缓存

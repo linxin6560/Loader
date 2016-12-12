@@ -4,8 +4,6 @@ import java.util.List;
 
 /**
  * 列表数据
- * INFO:返回数据中data的数据类型，若data为列表，则用List<Item>,若是普通Info类，则用相应的类
- * ITEM:列表数据子项类
  * Created by LinXin on 2016/6/21 9:23.
  */
 public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
