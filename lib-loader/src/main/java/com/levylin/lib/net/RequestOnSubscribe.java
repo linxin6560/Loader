@@ -1,20 +1,13 @@
 package com.levylin.lib.net;
 
-import android.text.TextUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.levylin.lib.net.exception.HttpException;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Cancellable;
-import okhttp3.HttpUrl;
 import okhttp3.Request;
-import okio.Buffer;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -26,36 +19,16 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
 
     //请求Call
     private Call<T> call;
-    //数据类型
-    private Type type;
-    //缓存key
-    private String cacheKey;
-    //文件缓存
-    private FileCache mFileCache;
     //是否需要保存缓存
     private boolean isNeedSaveCache;
     //加载配置
-    private CacheStrategy cacheStrategy;
+    private CacheStrategy<T> cacheStrategy;
+    private Request mRequest;
 
-    RequestOnSubscribe(Call<T> call, Type type, CacheStrategy strategy) {
-        Request request = call.request();
-        HttpUrl httpUrl = request.url();
-        StringBuilder sb = new StringBuilder();
-        String url = httpUrl.toString();
-        sb.append(url);
-        if (request.method().equals("POST")) {
-            String params = bodyToString(request);
-            if (!TextUtils.isEmpty(params)) {
-                sb.append(url.contains("?") ? "&" : "?");
-                sb.append(params);
-            }
-        }
-        url = sb.toString();
+    RequestOnSubscribe(Call<T> call, CacheStrategy<T> strategy) {
+        mRequest = call.request();
         this.cacheStrategy = strategy;
         this.call = call;
-        this.type = type;
-        this.mFileCache = FileCache.getInstance();
-        this.cacheKey = String.valueOf(url.hashCode());
     }
 
     @Override
@@ -114,9 +87,9 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the emitter
      */
     private void requestReadCacheFirst(FlowableEmitter<? super T> emitter) {
-        String result = mFileCache.getCacheData(cacheKey);
-        if (!mFileCache.isTimeOut(cacheKey, cacheStrategy.getCacheTimeOut()) && !TextUtils.isEmpty(result)) {
-            readFromCache(result, emitter);
+        T t = cacheStrategy.readCache(mRequest);
+        if (!cacheStrategy.isTimeOut() && t != null) {
+            onNext(emitter, t);
         } else {
             //过期则重新从网络读取数据
             requestFromNet(emitter);
@@ -129,11 +102,11 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the subscriber
      */
     private void requestReadCacheFirstAndNet(FlowableEmitter<? super T> emitter) {
-        String result = mFileCache.getCacheData(cacheKey);
-        if (!TextUtils.isEmpty(result)) {
-            readFromCache(result, emitter);
+        T t = cacheStrategy.readCache(mRequest);
+        if (t != null) {
+            onNext(emitter, t);
         }
-        if (mFileCache.isTimeOut(cacheKey, cacheStrategy.getCacheTimeOut())) {
+        if (cacheStrategy.isTimeOut()) {
             //过期则重新从网络读取数据
             requestFromNet(emitter);
         }
@@ -145,9 +118,9 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the subscriber
      */
     private void requestReadCacheAndNet(FlowableEmitter<? super T> emitter) {
-        String result = mFileCache.getCacheData(cacheKey);
-        if (!TextUtils.isEmpty(result)) {
-            readFromCache(result, emitter);
+        T t = cacheStrategy.readCache(mRequest);
+        if (t != null) {
+            onNext(emitter, t);
         }
         requestFromNet(emitter);
     }
@@ -165,8 +138,8 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
             Response<T> response = call.execute();
             if (response.isSuccessful() && response.body() != null) {
                 T t = response.body();
-                if (isNeedSaveCache && LoadUtils.isCanCache(t)) {
-                    mFileCache.saveCacheFileData(cacheKey, JSON.toJSONString(t));
+                if (isNeedSaveCache) {
+                    cacheStrategy.saveCache(mRequest, t);
                 }
                 onNext(emitter, t);
                 return;
@@ -176,19 +149,6 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
             e.printStackTrace();
             onError(emitter, e);
         }
-    }
-
-    /**
-     * 解析并根据缓存类型缓存数据
-     *
-     * @param s 数据内容
-     */
-    private void readFromCache(String s, FlowableEmitter<? super T> emitter) {
-        if (TextUtils.isEmpty(s))
-            return;
-        String data = JSONObject.parseObject(s).getString("d");
-        T t = JSON.parseObject(data, type);
-        onNext(emitter, t);
     }
 
     /**
@@ -216,22 +176,5 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
         if (emitter.isCancelled())
             return;
         emitter.onComplete();
-    }
-
-    /**
-     * 网络请求post参数转为string
-     *
-     * @param request 请求
-     * @return 参数string
-     */
-    private String bodyToString(final Request request) {
-        try {
-            Request copy = request.newBuilder().build();
-            Buffer buffer = new Buffer();
-            copy.body().writeTo(buffer);
-            return buffer.readUtf8();
-        } catch (final Exception e) {
-            return null;
-        }
     }
 }

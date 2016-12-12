@@ -1,11 +1,13 @@
 package com.levylin.lib.net;
 
+import okhttp3.Request;
+
 /**
  * 缓存策略
  * Created by LinXin on 2016/7/25 16:18.
  * edit by LinXin on 2016/8/11 9:30 去掉设置缓存及缓存时间的操作，改为只在构造函数中控制，目的是防止类型被改变，可通过设置加载状态判断是否加载与保存缓存
  */
-public class CacheStrategy {
+public abstract class CacheStrategy<T> {
     private static final int STATUS_DEFAULT = -1;//默认状态，该状态下，通过cache type自行判断是否需要读取保和存缓存
     private static final int STATUS_TRUE = 1;//生效状态，不以cache type判断存取，改为以该状态为主
     private static final int STATUS_FALSE = 0;//不生效状态，不以cache type判断存取，改为以改状态为主
@@ -93,4 +95,27 @@ public class CacheStrategy {
         readCacheStatus = STATUS_DEFAULT;
         saveCacheStatus = STATUS_DEFAULT;
     }
+
+    /**
+     * 缓存是否过期
+     *
+     * @return
+     */
+    public abstract boolean isTimeOut();
+
+    /**
+     * 读取缓存
+     *
+     * @param request
+     * @return
+     */
+    public abstract T readCache(Request request);
+
+    /**
+     * 保存缓存
+     *
+     * @param request
+     * @param t
+     */
+    public abstract void saveCache(Request request, T t);
 }

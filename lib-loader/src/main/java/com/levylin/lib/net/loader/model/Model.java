@@ -1,12 +1,8 @@
 package com.levylin.lib.net.loader.model;
 
-import com.levylin.lib.net.CacheType;
 import com.levylin.lib.net.CacheStrategy;
 import com.levylin.lib.net.LoadUtils;
 import com.levylin.lib.net.listener.OnLoadListener;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
@@ -18,13 +14,11 @@ import retrofit2.Call;
  */
 public abstract class Model<T> {
 
-    private Type mType;
-    CacheStrategy loadConfig;
+    CacheStrategy<T> cacheStrategy;
     private boolean isManualRefresh = false;//手动刷新
 
     protected Model() {
-        mType = getSuperClassGenricType(getClass(), 0);
-        loadConfig = new CacheStrategy(getCacheType(), getCacheTimeOut());
+        cacheStrategy = getCacheStrategy();
     }
 
     /**
@@ -61,30 +55,16 @@ public abstract class Model<T> {
      * 刷新前要做的操作,一般用于改变缓存类型
      */
     public void preRefresh() {
-        loadConfig.reset();//先重置状态，防止读取状态在别的地方已修改过
-        loadConfig.setIsReadCache(false);
+        cacheStrategy.reset();//先重置状态，防止读取状态在别的地方已修改过
+        cacheStrategy.setIsReadCache(false);
     }
 
     /**
      * 重新加载前要做的操作,一般用于改变缓存类型
      */
     public void preReLoad() {
-        loadConfig.reset();//先重置状态，防止读取状态在别的地方已修改过
-        loadConfig.setIsReadCache(false);
-    }
-
-    /**
-     * 设置缓存类型
-     */
-    protected CacheType getCacheType() {
-        return CacheType.NO_CACHE;
-    }
-
-    /**
-     * 设置缓存时间
-     */
-    protected int getCacheTimeOut() {
-        return 0;
+        cacheStrategy.reset();//先重置状态，防止读取状态在别的地方已修改过
+        cacheStrategy.setIsReadCache(false);
     }
 
     /**
@@ -93,7 +73,7 @@ public abstract class Model<T> {
      * @param listener 加载监听
      */
     public final Disposable load(OnLoadListener<T> listener) {
-        return LoadUtils.load(getModelCall(), mType, loadConfig, listener);
+        return LoadUtils.load(getModelCall(), cacheStrategy, listener);
     }
 
     /**
@@ -104,23 +84,9 @@ public abstract class Model<T> {
     protected abstract Call<T> getModelCall();
 
     /**
-     * 获取类的泛型
+     * 获取缓存策略
      *
-     * @param clazz 类名
-     * @param index 泛型位置
-     * @return 泛型类型
+     * @return
      */
-    private static Type getSuperClassGenricType(final Class clazz, final int index) {
-        //返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的直接超类的 Type。
-        Type genType = clazz.getGenericSuperclass();
-        if (!(genType instanceof ParameterizedType)) {
-            return Object.class;
-        }
-        //返回表示此类型实际类型参数的 Type 对象的数组。
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        if (index >= params.length || index < 0) {
-            return Object.class;
-        }
-        return params[index];
-    }
+    protected abstract CacheStrategy<T> getCacheStrategy();
 }

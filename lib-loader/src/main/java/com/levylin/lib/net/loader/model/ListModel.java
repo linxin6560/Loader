@@ -25,8 +25,8 @@ public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
 
     public void preLoadNext() {
         page++;
-        loadConfig.setIsReadCache(false);
-        loadConfig.setIsSaveCache(false);
+        cacheStrategy.setIsReadCache(false);
+        cacheStrategy.setIsSaveCache(false);
     }
 
     @Override
