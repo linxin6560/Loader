@@ -84,9 +84,11 @@ public abstract class Model<T> {
     protected abstract Call<T> getModelCall();
 
     /**
-     * 获取缓存策略
+     * 获取缓存策略,默认不需要缓存
      *
      * @return
      */
-    protected abstract CacheStrategy<T> getCacheStrategy();
+    protected CacheStrategy<T> getCacheStrategy() {
+        return null;
+    }
 }
