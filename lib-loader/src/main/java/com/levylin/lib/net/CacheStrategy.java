@@ -88,7 +88,7 @@ public abstract class CacheStrategy<T> {
      *
      * @return
      */
-    public abstract boolean isTimeOut();
+    public abstract boolean isTimeOut(Request request);
 
     /**
      * 读取缓存

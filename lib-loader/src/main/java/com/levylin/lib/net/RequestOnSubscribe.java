@@ -91,7 +91,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      */
     private void requestReadCacheFirst(FlowableEmitter<? super T> emitter) {
         T t = cacheStrategy.readCache(mRequest);
-        if (!cacheStrategy.isTimeOut() && t != null) {
+        if (!cacheStrategy.isTimeOut(mRequest) && t != null) {
             onNext(emitter, t);
         } else {
             //过期则重新从网络读取数据
@@ -109,7 +109,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
         if (t != null) {
             onNext(emitter, t);
         }
-        if (cacheStrategy.isTimeOut()) {
+        if (cacheStrategy.isTimeOut(mRequest)) {
             //过期则重新从网络读取数据
             requestFromNet(emitter);
         }

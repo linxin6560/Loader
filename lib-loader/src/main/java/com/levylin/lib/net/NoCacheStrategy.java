@@ -12,7 +12,7 @@ class NoCacheStrategy<T> extends CacheStrategy<T> {
     }
 
     @Override
-    public boolean isTimeOut() {
+    public boolean isTimeOut(Request request) {
         return false;
     }
 
