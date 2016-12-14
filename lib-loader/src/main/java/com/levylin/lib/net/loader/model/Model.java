@@ -18,12 +18,6 @@ public abstract class Model<T> {
     CacheStrategy<T> cacheStrategy;
     private boolean isManualRefresh = false;//手动刷新
 
-    protected Model() {
-        Call<T> call = getModelCall();
-        Request request = call.request();
-        cacheStrategy = getCacheStrategy(request);
-    }
-
     /**
      * 界面数据是否为空
      *
@@ -76,6 +70,10 @@ public abstract class Model<T> {
      * @param listener 加载监听
      */
     public final Disposable load(OnLoadListener<T> listener) {
+        if (cacheStrategy == null) {
+            Call<T> call = getModelCall();
+            cacheStrategy = getCacheStrategy(call.request());
+        }
         return LoadUtils.load(getModelCall(), cacheStrategy, listener);
     }
 
