@@ -23,10 +23,8 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
     private boolean isNeedSaveCache;
     //加载配置
     private CacheStrategy<T> cacheStrategy;
-    private Request mRequest;
 
     RequestOnSubscribe(Call<T> call, CacheStrategy<T> strategy) {
-        mRequest = call.request();
         this.cacheStrategy = strategy;
         if (cacheStrategy == null) {
             cacheStrategy = new NoCacheStrategy<>();
@@ -90,8 +88,8 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the emitter
      */
     private void requestReadCacheFirst(FlowableEmitter<? super T> emitter) {
-        T t = cacheStrategy.readCache(mRequest);
-        if (!cacheStrategy.isTimeOut(mRequest) && t != null) {
+        T t = cacheStrategy.readCache();
+        if (!cacheStrategy.isTimeOut() && t != null) {
             onNext(emitter, t);
         } else {
             //过期则重新从网络读取数据
@@ -105,11 +103,11 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the subscriber
      */
     private void requestReadCacheFirstAndNet(FlowableEmitter<? super T> emitter) {
-        T t = cacheStrategy.readCache(mRequest);
+        T t = cacheStrategy.readCache();
         if (t != null) {
             onNext(emitter, t);
         }
-        if (cacheStrategy.isTimeOut(mRequest)) {
+        if (cacheStrategy.isTimeOut()) {
             //过期则重新从网络读取数据
             requestFromNet(emitter);
         }
@@ -121,7 +119,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
      * @param emitter the subscriber
      */
     private void requestReadCacheAndNet(FlowableEmitter<? super T> emitter) {
-        T t = cacheStrategy.readCache(mRequest);
+        T t = cacheStrategy.readCache();
         if (t != null) {
             onNext(emitter, t);
         }
@@ -142,7 +140,7 @@ class RequestOnSubscribe<T> implements FlowableOnSubscribe<T> {
             if (response.isSuccessful() && response.body() != null) {
                 T t = response.body();
                 if (isNeedSaveCache) {
-                    cacheStrategy.saveCache(mRequest, t);
+                    cacheStrategy.saveCache(t);
                 }
                 onNext(emitter, t);
                 return;

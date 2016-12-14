@@ -5,6 +5,7 @@ import com.levylin.lib.net.LoadUtils;
 import com.levylin.lib.net.listener.OnLoadListener;
 
 import io.reactivex.disposables.Disposable;
+import okhttp3.Request;
 import retrofit2.Call;
 
 /**
@@ -18,7 +19,9 @@ public abstract class Model<T> {
     private boolean isManualRefresh = false;//手动刷新
 
     protected Model() {
-        cacheStrategy = getCacheStrategy();
+        Call<T> call = getModelCall();
+        Request request = call.request();
+        cacheStrategy = getCacheStrategy(request);
     }
 
     /**
@@ -88,7 +91,7 @@ public abstract class Model<T> {
      *
      * @return
      */
-    protected CacheStrategy<T> getCacheStrategy() {
+    protected CacheStrategy<T> getCacheStrategy(Request request) {
         return null;
     }
 }
