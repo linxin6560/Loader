@@ -2,6 +2,7 @@ package com.levylin.lib.net.loader.model;
 
 import com.levylin.lib.net.CacheStrategy;
 import com.levylin.lib.net.LoadUtils;
+import com.levylin.lib.net.NoCacheStrategy;
 import com.levylin.lib.net.listener.OnLoadListener;
 
 import io.reactivex.disposables.Disposable;
@@ -90,6 +91,6 @@ public abstract class Model<T> {
      * @return
      */
     protected CacheStrategy<T> getCacheStrategy(Request request) {
-        return null;
+        return new NoCacheStrategy<>();
     }
 }

@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 10
-        versionName "1.0.4"
+        versionCode 11
+        versionName "1.0.5"
     }
     buildTypes {
         release {
@@ -45,7 +45,7 @@ publish {
     userOrg = 'linxin6560'//bintray.com用户名
     groupId = 'com.github.linxin6560'//jcenter上的路径
     artifactId = 'loader'//项目名称
-    publishVersion = '1.0.4'//版本号
+    publishVersion = '1.0.5'//版本号
     desc = '一个简化安卓加载逻辑过程的library'//描述
     website = 'https://github.com/linxin6560/Loader'//网站
 }

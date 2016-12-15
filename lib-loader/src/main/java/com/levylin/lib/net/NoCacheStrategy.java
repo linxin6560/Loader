@@ -3,9 +3,9 @@ package com.levylin.lib.net;
 /**
  * 无缓存的策略
  */
-class NoCacheStrategy<T> extends CacheStrategy<T> {
+public class NoCacheStrategy<T> extends CacheStrategy<T> {
 
-    NoCacheStrategy() {
+    public NoCacheStrategy() {
         super(null, CacheType.NO_CACHE, 0);
     }
 
