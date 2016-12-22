@@ -19,7 +19,9 @@ class ResponseSubscriber<T> extends ResourceSubscriber<T> {
     @Override
     public void onStart() {
         super.onStart();
-        listener.onStart();
+        if (listener != null) {
+            listener.onStart();
+        }
     }
 
     @Override
@@ -29,11 +31,15 @@ class ResponseSubscriber<T> extends ResourceSubscriber<T> {
 
     @Override
     public void onError(Throwable e) {
-        listener.onError(e);
+        if (listener != null) {
+            listener.onError(e);
+        }
     }
 
     @Override
     public void onNext(T response) {
-        listener.onSuccess(response);
+        if (listener != null) {
+            listener.onSuccess(response);
+        }
     }
 }
