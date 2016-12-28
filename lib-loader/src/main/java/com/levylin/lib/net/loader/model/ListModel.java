@@ -10,8 +10,8 @@ public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
     protected static int FIRST_PAGE = 1;
     protected int page = FIRST_PAGE;
     protected List<ITEM> mList;
-    protected List<ITEM> mapList;//由map方法转换的零时数据列表
     protected boolean isLoadMoreFromEnd = true;
+    protected boolean hasNext = false;
 
     public ListModel(List<ITEM> list) {
         this.mList = list;
@@ -43,7 +43,8 @@ public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
 
     @Override
     public void setData(boolean isRefreshing, INFO response) {
-        mapList = map(response);
+        List<ITEM> mapList = map(response);
+        hasNext = ensureHasNext(response, mapList);
         if (mapList == null) {
             return;
         }
@@ -62,7 +63,24 @@ public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
         return mList.isEmpty();
     }
 
-    public abstract boolean hasNext(INFO response);
+    public boolean hasNext() {
+        return hasNext;
+    }
 
-    public abstract List<ITEM> map(INFO response);
+    /**
+     * 确认是否有下一页
+     *
+     * @param response
+     * @param mapList
+     * @return
+     */
+    protected abstract boolean ensureHasNext(INFO response, List<ITEM> mapList);
+
+    /**
+     * 数据转换
+     *
+     * @param response
+     * @return
+     */
+    protected abstract List<ITEM> map(INFO response);
 }

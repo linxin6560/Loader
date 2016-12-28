@@ -11,12 +11,12 @@ import com.levylin.lib.net.loader.model.ListModel;
  * 分页页面数据加载
  * Created by LinXin on 2016/6/20 10:35.
  */
-public class ListDataLoader<INFO, ITEM> extends DataLoader<INFO> implements OnLoadMoreListener {
+public class ListLoader<INFO, ITEM> extends DataLoader<INFO> implements OnLoadMoreListener {
 
     private ListModel<INFO, ITEM> model;
     private IListViewHelper mListViewHelper;
 
-    public ListDataLoader(INetworkView view, ListModel<INFO, ITEM> listModel) {
+    public ListLoader(INetworkView view, ListModel<INFO, ITEM> listModel) {
         super(view, listModel);
         this.model = listModel;
     }
@@ -116,7 +116,7 @@ public class ListDataLoader<INFO, ITEM> extends DataLoader<INFO> implements OnLo
     private void setLoadMoreState(INFO response) {
         if (mListViewHelper == null)
             return;
-        if (model.hasNext(response)) {
+        if (model.hasNext()) {
             mListViewHelper.showLoadMoreIdle();
         } else {
             mListViewHelper.showLoadMoreNoMore();
