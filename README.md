@@ -130,23 +130,23 @@ Loader是一个方便Activity控制加载状态，加载缓存的工具类
 
     public class ListDataActivity extends BaseActivity {
 
-      @Override
-      protected void onCreate(@Nullable Bundle savedInstanceState) {
-          super.onCreate(savedInstanceState);
-          setContentView(R.layout.act_list_data);
-          SwipeRefreshLayout layout = (SwipeRefreshLayout) findViewById(R.id.act_list_data_sfl);
-          RecyclerView recyclerView = (RecyclerView) findViewById(R.id.act_list_data_rv);
-          recyclerView.setLayoutManager(new LinearLayoutManager(this));
-          List<String> list = new ArrayList<>();
-          MyAdapter adapter = new MyAdapter(list);
-          recyclerView.setAdapter(adapter);
-          ListDataModel model = new ListDataModel(list);
-          ListLoader<String, String> loader = new ListLoader<>(this, model);
-          loader.setLoadStateHelper(new LoadStateHelper(layout));
-          loader.setRefreshViewHelper(new RefreshHelper(layout));
-          loader.setListViewHelper(new RecyclerViewHelper(recyclerView));
-          loader.load();
-      }
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.act_list_data);
+            SwipeRefreshLayout layout = (SwipeRefreshLayout) findViewById(R.id.act_list_data_sfl);
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.act_list_data_rv);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            List<String> list = new ArrayList<>();
+            MyAdapter adapter = new MyAdapter(list);
+            recyclerView.setAdapter(adapter);
+            ListDataModel model = new ListDataModel(list);
+            ListLoader<String, String> loader = new ListLoader<>(this, model);
+            loader.setLoadStateHelper(new LoadStateHelper(layout));
+            loader.setRefreshViewHelper(new RefreshHelper(layout));
+            loader.setListViewHelper(new RecyclerViewHelper(recyclerView));
+            loader.load();
+        }
     }
 
     
