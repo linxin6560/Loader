@@ -128,28 +128,27 @@ Loader是一个方便Activity控制加载状态，加载缓存的工具类
     
 或者
 
-        public class ListDataActivity extends BaseActivity {
+    public class ListDataActivity extends BaseActivity {
 
-            @Override
-            protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                setContentView(R.layout.act_list_data);
-                SwipeRefreshLayout layout = (SwipeRefreshLayout) findViewById(R.id.act_list_data_sfl);
-                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.act_list_data_rv);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.act_list_data);
+            SwipeRefreshLayout layout = (SwipeRefreshLayout) findViewById(R.id.act_list_data_sfl);
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.act_list_data_rv);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-                List<String> list = new ArrayList<>();
-                MyAdapter adapter = new MyAdapter(list);
-                recyclerView.setAdapter(adapter);
+            List<String> list = new ArrayList<>();
+            MyAdapter adapter = new MyAdapter(list);
+            recyclerView.setAdapter(adapter);
 
-                ListDataModel model = new ListDataModel(list);
-                ListLoader<String, String> loader = new ListLoader<>(this, model);
-                loader.setLoadStateHelper(new LoadStateHelper(layout));
-                loader.setRefreshViewHelper(new RefreshHelper(layout));
-                loader.setListViewHelper(new RecyclerViewHelper(recyclerView));
-                loader.load();
-            }
+            ListDataModel model = new ListDataModel(list);
+            ListLoader<String, String> loader = new ListLoader<>(this, model);
+            loader.setLoadStateHelper(new LoadStateHelper(layout));//控制加载中，加载失败，加载成功
+            loader.setRefreshViewHelper(new RefreshHelper(layout));//控制刷新
+            loader.setListViewHelper(new RecyclerViewHelper(recyclerView));//控制自动加载下一页
+            loader.load();
         }
-
+    }
     
 这样子就可以了。
