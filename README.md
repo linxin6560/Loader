@@ -146,9 +146,8 @@ Loader是一个方便Activity控制加载状态，加载缓存的工具类
             ListLoader<String, String> loader = new ListLoader<>(this, model);
             loader.setLoadStateHelper(new LoadStateHelper(layout));//控制加载中，加载失败，加载成功
             loader.setRefreshViewHelper(new RefreshHelper(layout));//控制刷新
-            loader.setListViewHelper(new RecyclerViewHelper(recyclerView));//控制自动加载下一页
-            loader.load();
+            loader.setListViewHelper(new RecyclerViewHelper(recyclerView));//控制自动加载下一页
+            loader.load();
         }
     }
-    
 这样子就可以了。
