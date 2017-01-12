@@ -43,13 +43,13 @@ public abstract class ListModel<INFO, ITEM> extends Model<INFO> {
 
     @Override
     public void setData(boolean isRefreshing, INFO response) {
+        if (page == FIRST_PAGE) {
+            clear();
+        }
         List<ITEM> mapList = map(response);
         hasNext = ensureHasNext(response, mapList);
         if (mapList == null) {
             return;
-        }
-        if (page == FIRST_PAGE) {
-            clear();
         }
         if (isLoadMoreFromEnd) {
             mList.addAll(mapList);
