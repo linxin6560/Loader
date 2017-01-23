@@ -70,7 +70,7 @@ public abstract class Model<T> {
      *
      * @param listener 加载监听
      */
-    public final Disposable load(OnLoadListener<T> listener) {
+    public Disposable load(OnLoadListener<T> listener) {
         if (cacheStrategy == null) {
             Call<T> call = getModelCall();
             cacheStrategy = getCacheStrategy(call.request());

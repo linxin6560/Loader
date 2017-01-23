@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * edit by LinXin on 2016/8/5 13:39 增加适配GridLayoutManager和StaggeredGridLayoutManager
  */
 @SuppressWarnings("unchecked")
-public class RecyclerLoadMoreAdapter extends RecyclerView.Adapter {
+class RecyclerLoadMoreAdapter extends RecyclerView.Adapter {
 
     //加载更多ViewType
     private static final int VIEW_TYPE_LOAD_MORE = 1000;
@@ -21,7 +21,7 @@ public class RecyclerLoadMoreAdapter extends RecyclerView.Adapter {
     private View footerView;
     private boolean showFooterView = false;
 
-    public RecyclerLoadMoreAdapter(RecyclerView recyclerView, View footerView) {
+    RecyclerLoadMoreAdapter(RecyclerView recyclerView, View footerView) {
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         this.delegate = recyclerView.getAdapter();
         RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
